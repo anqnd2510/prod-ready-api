@@ -126,6 +126,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       type: 'refresh',
+      jti: `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`, // Add unique identifier
     };
 
     const accessToken = this.jwtService.sign(accessTokenPayload, {
