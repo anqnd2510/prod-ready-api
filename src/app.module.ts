@@ -8,6 +8,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { HealthController } from './health/health.controller';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -34,6 +36,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     PrismaModule,
     AuthModule,
     TaskModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
