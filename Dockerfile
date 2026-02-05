@@ -6,6 +6,8 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
+
+# Copy Prisma schema first for better caching
 COPY src/prisma ./src/prisma
 COPY prisma.config.ts ./
 

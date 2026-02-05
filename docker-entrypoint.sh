@@ -9,6 +9,14 @@ done
 
 echo "✅ Database is ready!"
 
+echo "⏳ Waiting for Redis to be ready..."
+until nc -z redis 6379; do
+  echo "Redis is unavailable - sleeping"
+  sleep 2
+done
+
+echo "✅ Redis is ready!"
+
 echo "🔄 Running database migrations..."
 npx prisma migrate deploy
 

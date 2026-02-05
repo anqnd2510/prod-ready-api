@@ -8,31 +8,40 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
-import { HealthController } from './health/health.controller';
 import { HealthModule } from './health/health.module';
+import { RedisModule } from './redis/redis.module';
+import { RedisThrottlerStorage } from './redis/redis-throttler.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ThrottlerModule.forRoot([
-      {
-        name: 'short',
-        ttl: 1000, // 1 second
-        limit: 10, // 10 requests per second
-      },
-      {
-        name: 'medium',
-        ttl: 60000, // 1 minute
-        limit: 100, // 100 requests per minute
-      },
-      {
-        name: 'long',
-        ttl: 900000, // 15 minutes
-        limit: 1000, // 1000 requests per 15 minutes
-      },
-    ]),
+    RedisModule,
+    ThrottlerModule.forRootAsync({
+      imports: [RedisModule],
+      inject: [RedisThrottlerStorage],
+      useFactory: (storage: RedisThrottlerStorage) => ({
+        throttlers: [
+          {
+            name: 'short',
+            ttl: 1000, // 1 second
+            limit: 10, // 10 requests per second
+          },
+          {
+            name: 'medium',
+            ttl: 60000, // 1 minute
+            limit: 100, // 100 requests per minute
+          },
+          {
+            name: 'long',
+            ttl: 900000, // 15 minutes
+            limit: 1000, // 1000 requests per 15 minutes
+          },
+        ],
+        storage,
+      }),
+    }),
     PrismaModule,
     AuthModule,
     TaskModule,
